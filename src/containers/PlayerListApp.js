@@ -1,27 +1,41 @@
-import React, { Component } from 'react';
-import styles from './PlayerListApp.css';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import styles from "./PlayerListApp.css";
+import { connect } from "react-redux";
 
-import { addPlayer, deletePlayer, starPlayer } from '../actions/PlayersActions';
-import { PlayerList, AddPlayerInput } from '../components';
+import { addPlayer, deletePlayer, starPlayer } from "../actions/PlayersActions";
+import { PlayerList, AddPlayerInput } from "../components";
+import { Button } from "semantic-ui-react";
 
 class PlayerListApp extends Component {
+  handleSave = async () => {
+    const { playerlist } = this.props;
+    for (var i =0; i < playerlist.playersById.length; i++)
+    fetch(`http://localhost:4000/save?name=${playerlist.playersById[i].name}&team=${playerlist.playersById[i].team}`).catch(err =>
+      console.error(err)
+    );
+
+  };
   render() {
     const {
-      playerlist: { playersById },
+      playerlist: { playersById }
     } = this.props;
 
     const actions = {
       addPlayer: this.props.addPlayer,
       deletePlayer: this.props.deletePlayer,
-      starPlayer: this.props.starPlayer,
+      starPlayer: this.props.starPlayer
     };
 
     return (
-      <div className={styles.playerListApp}>
-        <h1>NBA Players</h1>
-        <AddPlayerInput addPlayer={actions.addPlayer} />
-        <PlayerList players={playersById} actions={actions} />
+      <div>
+        <div className={styles.playerListApp}>
+          <h1>NBA Players</h1>
+          <AddPlayerInput addPlayer={actions.addPlayer} />
+          <PlayerList players={playersById} actions={actions} />
+        </div>
+        <Button primary onClick={this.handleSave}>
+          save
+        </Button>
       </div>
     );
   }
@@ -36,6 +50,6 @@ export default connect(
   {
     addPlayer,
     deletePlayer,
-    starPlayer,
-  },
+    starPlayer
+  }
 )(PlayerListApp);
